@@ -1,14 +1,14 @@
 # Version: 7.2.3.35 (9e24c88)
-# [first argument, ignore] # /Users/andrewmoehrke/Projects/CarFinderOneView (Ditmer backup)/CarFinderOneView/bin/iPhoneSimulator/Debug/mtouch.exe
+# [first argument, ignore] # /Users/andrewmoehrke/Projects/CarFinderOneView/CarFinderOneView/bin/iPhoneSimulator/Debug/mtouch.exe
 /Developer/MonoTouch/usr/bin/mtouch \
 	-sdkroot \
 	/Applications/Xcode.app/Contents/Developer \
 	--cache \
-	"/Users/andrewmoehrke/Projects/CarFinderOneView (Ditmer backup)/CarFinderOneView/obj/iPhoneSimulator/Debug/mtouch-cache" \
+	/Users/andrewmoehrke/Projects/CarFinderOneView/CarFinderOneView/obj/iPhoneSimulator/Debug/mtouch-cache \
 	--nomanifest \
 	--nosign \
 	-sim \
-	"/Users/andrewmoehrke/Projects/CarFinderOneView (Ditmer backup)/CarFinderOneView/bin/iPhoneSimulator/Debug/CarFinderOneView.app" \
+	/Users/andrewmoehrke/Projects/CarFinderOneView/CarFinderOneView/bin/iPhoneSimulator/Debug/CarFinderOneView.app \
 	-r \
 	/Developer/MonoTouch/usr/lib/mono/2.1/System.dll \
 	-r \
@@ -24,4 +24,4 @@
 	-targetver \
 	7.0 \
 	--abi=i386 \
-	"/Users/andrewmoehrke/Projects/CarFinderOneView (Ditmer backup)/CarFinderOneView/bin/iPhoneSimulator/Debug/CarFinderOneView.exe" \
+	/Users/andrewmoehrke/Projects/CarFinderOneView/CarFinderOneView/bin/iPhoneSimulator/Debug/CarFinderOneView.exe \

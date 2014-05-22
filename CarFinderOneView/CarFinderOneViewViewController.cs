@@ -87,52 +87,38 @@ namespace CarFinderOneView
 		public override void ViewDidLoad ()
 		{
 			base.ViewDidLoad ();
+
+			FindCarButton.Hidden = true;
+			ClearButton.Hidden = true;
+			ParkCarButton.Hidden = true;
 			
 			// Perform any additional setup after loading the view, typically from a nib.
 		}
 
 		public override void ViewWillAppear (bool animated)
 		{
-			FindCarButton.Hidden = true;
-			ClearButton.Hidden = true;
-
 			ParkingMap.ShowsUserLocation = true;
 			ParkingMap.DidUpdateUserLocation += (_sender, e) => {
 				if (ParkingMap.UserLocation != null) {
-					CLLocationCoordinate2D coords = ParkingMap.UserLocation.Coordinate;
-					MKCoordinateSpan span = new MKCoordinateSpan(MilesToLatitudeDegrees(2), MilesToLongitudeDegrees(2, coords.Latitude));
-					ParkingMap.Region = new MKCoordinateRegion(coords, span);
-					//StorePosition(coords.Latitude, coords.Longitude);
+//					if(ParkingMap.UserLocation.Location.HorizontalAccuracy < 15) {
+						if(FindCarButton.Hidden == false){
+							getDirections( ParkingMap.UserLocation.Coordinate , GetSavedPosition ());
+						} else {
+							ParkCarButton.Hidden = false;
+							CLLocationCoordinate2D coords = ParkingMap.UserLocation.Coordinate;
+							MKCoordinateSpan span = new MKCoordinateSpan(MilesToLatitudeDegrees(2), MilesToLongitudeDegrees(2, coords.Latitude));
+							ParkingMap.Region = new MKCoordinateRegion(coords, span);
+						}
+//					}
 				}
 			};
-
-//			class BasicMapAnnotation : MKAnnotation{
-//				public override CLLocationCoordinate2D Coordinate {get;set;}
-//				string title, subtitle;
-//				public override string Title { get{   return title; }}
-//				public override string Subtitle { get{   return subtitle; }}
-//				public BasicMapAnnotation (CLLocationCoordinate2D coordinate, string title, string subtitle) {
-//					this.Coordinate = coordinate;
-//					this.title = title;
-//					this.subtitle = subtitle;
-//				}
+			//IF THE USER DENIES TO THEIR DEVICE LOCATION
+//			if (!ParkingMap.UserLocationVisible) {
+//				CLLocationCoordinate2D coords = new CLLocationCoordinate2D(37.33233141,-122.0312186); // cupertino
+//				MKCoordinateSpan span = new MKCoordinateSpan(MilesToLatitudeDegrees(20), MilesToLongitudeDegrees(20, coords.Latitude));
+//				ParkingMap.Region = new MKCoordinateRegion(coords, span);
+//
 //			}
-
-//			ParkingMap.GetViewForAnnotation = delegate (MKMapView mapView, NSObject annotaion)
-//			{
-//				if (annotaion is MKUserLocation)
-//					return null;
-//
-//				MKPinAnnotationView pinView = (MKPinAnnotationView)ParkingMap.DequeueReusableAnnotation("pinID");
-//
-//				if(pinView == null)
-//				{
-//					pinView = new MKPinAnnotationView (annotaion, "pinID");
-//					pinView.PinColor = MKPinAnnotationColor.Green;
-//				}
-//
-//				return pinView;
-//			};
 
 			base.ViewWillAppear (animated);
 		}
@@ -153,11 +139,12 @@ namespace CarFinderOneView
 		}
 
 		public CarTimer cTime;
-			
+
+		//*******CODE TO RUN WHEN THE PARK CAR BUTTON IS TOUCHED*******
 		partial void ParkCarButton_TouchUpInside (UIButton sender)
 		{
-			//recenter map on current location
-			//ParkingMap.ShowsUserLocation = true;
+			//stop polling for location
+			ParkingMap.ShowsUserLocation = false;
 
 			//store user's current location
 			CLLocationCoordinate2D coords = ParkingMap.UserLocation.Coordinate;
@@ -175,45 +162,86 @@ namespace CarFinderOneView
 				else{
 					Console.WriteLine("lblTimer is null");
 				}
-
 			}
 			else {
-				UIAlertView _error2 = new UIAlertView ("Alert","Current location not set.", null, "Ok", null);
+				UIAlertView _error2 = new UIAlertView ("Alert","Current location not set. Make sure you enable Location Services for this app.", null, "Ok", null);
 				_error2.Show ();
 			}
 		}
 
-		public void StorePosition (double newLong, double newLat)
+		public void StorePosition (double newLat , double newLong)
 		{
 			var coordinate = new MonoTouch.CoreLocation.CLLocationCoordinate2D (newLat, newLong);
-
-			ParkingMap.AddAnnotation(new MKPointAnnotation()
-			{
-					Title = "My Car",
-					Coordinate = coordinate,
-			} );
-
-//			ParkingMap.SetCenterCoordinate (coordinate, true);
 
 			//update the settings class
 			mySettings.longitude = newLong;
 			mySettings.latitude = newLat;
-
 			mySettings.SaveSettings ();
 		}
 
+		public CLLocationCoordinate2D GetSavedPosition ()
+		{
+			mySettings.LoadSettings ();
+			return new CLLocationCoordinate2D (mySettings.latitude, mySettings.longitude);
+		}
 
+
+		//CODE FOR GETTING DIRECTIONS
+		public void getDirections(CLLocationCoordinate2D source, CLLocationCoordinate2D destination){
+//			var gg = new CLLocationCoordinate2D(37.8197, -122.4786);
+//			var sfo = new CLLocationCoordinate2D(37.6189, -122.3750);
+			var ggAnnotation = new MKPointAnnotation() { Title = "Starting Point", Coordinate = source };
+			var sfoAnnotation = new MKPointAnnotation() { Title = "My Car", Coordinate = destination };
+
+			ParkingMap.ShowAnnotations(new MKPointAnnotation[] { ggAnnotation, sfoAnnotation }, false);
+
+			var emptyDict = new NSDictionary();
+			var req = new MKDirectionsRequest() {
+				Source = new MKMapItem(new MKPlacemark(source, emptyDict)),
+				Destination = new MKMapItem(new MKPlacemark(destination, emptyDict)),
+				TransportType = MKDirectionsTransportType.Automobile
+			};
+
+			var dir = new MKDirections(req);
+			dir.CalculateDirections((response, error) => { 
+				if(error == null){
+					var route = response.Routes[0];
+					var rteLine = new MKPolylineRenderer(route.Polyline) {
+						LineWidth = 5.0f,
+						StrokeColor = UIColor.Purple
+					};
+
+					ParkingMap.OverlayRenderer = (mv, ol) => rteLine;
+					ParkingMap.AddOverlay(route.Polyline, MKOverlayLevel.AboveRoads);
+				}else{
+					Console.WriteLine(error);
+				}
+			});
+		}
+
+		//*******CODE TO RUN WHEN THE FIND CAR BUTTON IS TOUCHED*******
 		partial void FindCarButton_TouchUpInside (UIButton sender)
 		{
+			//stop polling for location
+			ParkingMap.ShowsUserLocation = true;
 
 		}
 
+		//*******CODE TO RUN WHEN THE CLEAR BUTTON IS TOUCHED*******
 		partial void ClearButton_TouchUpInside (UIButton sender)
 		{
+			if(ParkingMap.Overlays != null){
+				ParkingMap.RemoveOverlays(ParkingMap.Overlays);
+			}
+			if (ParkingMap.Annotations != null){
+				ParkingMap.RemoveAnnotations(ParkingMap.Annotations);
+			}
 			ParkCarButton.Hidden = false;
 			FindCarButton.Hidden = true;
 			ClearButton.Hidden = true;
 			cTime.ResetTimer ();
+
+			ParkingMap.ShowsUserLocation = true;
 		}
 
 		public MKMapView setMapRegion(MKMapView map)

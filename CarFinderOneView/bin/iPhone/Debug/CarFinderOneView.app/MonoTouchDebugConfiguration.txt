@@ -1,0 +1,4 @@
+IP: 10.0.3.238
+IP: 10.0.1.20
+USB Debugging: 1
+Port: 10000

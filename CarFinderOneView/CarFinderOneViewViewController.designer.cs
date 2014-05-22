@@ -15,35 +15,35 @@ namespace CarFinderOneView
 	partial class CarFinderOneViewViewController
 	{
 		[Outlet]
-		[GeneratedCodeAttribute ("iOS Designer", "1.0")]
-		MonoTouch.UIKit.UIButton ClearButton { get; set; }
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UIButton ClearButton { get; set; }
 
 		[Outlet]
-		[GeneratedCodeAttribute ("iOS Designer", "1.0")]
-		MonoTouch.UIKit.UIButton FindCarButton { get; set; }
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UIButton FindCarButton { get; set; }
 
 		[Outlet]
-		[GeneratedCodeAttribute ("iOS Designer", "1.0")]
-		MonoTouch.UIKit.UILabel lblTimer { get; set; }
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UILabel lblTimer { get; set; }
 
 		[Outlet]
-		[GeneratedCodeAttribute ("iOS Designer", "1.0")]
-		MonoTouch.UIKit.UIButton ParkCarButton { get; set; }
+		[GeneratedCode ("iOS Designer", "1.0")]
+		UIButton ParkCarButton { get; set; }
 
 		[Outlet]
-		[GeneratedCodeAttribute ("iOS Designer", "1.0")]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		MonoTouch.MapKit.MKMapView ParkingMap { get; set; }
 
 		[Action ("ClearButton_TouchUpInside:")]
-		[GeneratedCodeAttribute ("iOS Designer", "1.0")]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		partial void ClearButton_TouchUpInside (UIButton sender);
 
 		[Action ("FindCarButton_TouchUpInside:")]
-		[GeneratedCodeAttribute ("iOS Designer", "1.0")]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		partial void FindCarButton_TouchUpInside (UIButton sender);
 
 		[Action ("ParkCarButton_TouchUpInside:")]
-		[GeneratedCodeAttribute ("iOS Designer", "1.0")]
+		[GeneratedCode ("iOS Designer", "1.0")]
 		partial void ParkCarButton_TouchUpInside (UIButton sender);
 
 		void ReleaseDesignerOutlets ()

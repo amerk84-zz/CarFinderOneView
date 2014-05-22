@@ -50,6 +50,11 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <ConsolePause>false</ConsolePause>
     <MtouchDebug>true</MtouchDebug>
+    <IpaPackageName>
+    </IpaPackageName>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>full</DebugType>
@@ -106,9 +111,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
-    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <InterfaceDefinition Include="MainStoryboard.storyboard" />
   </ItemGroup>
   <ItemGroup>
-    <InterfaceDefinition Include="MainStoryboard.storyboard" />
+    <BundleResource Include="Resources\Load Photo.png" />
+    <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\App Icon.png" />
   </ItemGroup>
 </Project>
